@@ -47,9 +47,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       }
 
       await Navigator.of(context).pushReplacement(
-        MaterialPageRoute<void>(
-          builder: (context) => const HomeScreen(),
-        ),
+        MaterialPageRoute<void>(builder: (context) => const HomeScreen()),
       );
       return;
     }
@@ -62,32 +60,61 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final currentPageData = _pages[_currentPage];
+    final isLastPage = _currentPage == _pages.length - 1;
+
     return Scaffold(
-      body: PageView.builder(
-        controller: _pageController,
-        itemCount: _pages.length,
-        onPageChanged: (index) {
-          setState(() {
-            _currentPage = index;
-          });
-        },
-        itemBuilder: (context, index) {
-          final page = _pages[index];
-          return _OnboardingPage(
-            data: page,
-            currentPage: _currentPage,
-            pageCount: _pages.length,
-            onNext: _nextPage,
-            buttonLabel: index == _pages.length - 1 ? 'Начать' : 'Далее',
-          );
-        },
+      body: ColoredBox(
+        color: Colors.white,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            PageView.builder(
+              controller: _pageController,
+              physics: const BouncingScrollPhysics(parent: PageScrollPhysics()),
+              itemCount: _pages.length,
+              onPageChanged: (index) {
+                setState(() {
+                  _currentPage = index;
+                });
+              },
+              itemBuilder: (context, index) {
+                return Image.asset(_pages[index].imagePath, fit: BoxFit.cover);
+              },
+            ),
+            const IgnorePointer(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    stops: [0.0, 0.48, 0.68, 1.0],
+                    colors: [
+                      Color(0x00000000),
+                      Color(0x14000000),
+                      Color(0xAD1C1C18),
+                      Color(0xFF292925),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            _OnboardingContent(
+              data: currentPageData,
+              currentPage: _currentPage,
+              pageCount: _pages.length,
+              onNext: _nextPage,
+              buttonLabel: isLastPage ? 'Начать' : 'Далее',
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
-class _OnboardingPage extends StatelessWidget {
-  const _OnboardingPage({
+class _OnboardingContent extends StatelessWidget {
+  const _OnboardingContent({
     required this.data,
     required this.currentPage,
     required this.pageCount,
@@ -103,92 +130,77 @@ class _OnboardingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ColoredBox(
-      color: Colors.white,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          Image.asset(
-            data.imagePath,
-            fit: BoxFit.fill,
-          ),
-          DecoratedBox(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                stops: [0.0, 0.48, 0.68, 1.0],
-                colors: [
-                  Color(0x00000000),
-                  Color(0x14000000),
-                  Color(0xAD1C1C18),
-                  Color(0xFF292925),
-                ],
-              ),
-            ),
-          ),
-          Positioned(
-            left: 0,
-            right: 0,
-            top: 634,
-            child: OnboardingPageIndicator(
-              currentPage: currentPage,
-              pageCount: pageCount,
-            ),
-          ),
-          Positioned(
-            left: 16,
-            right: 16,
-            top: 498,
-            child: Column(
-              children: [
-                Text(
-                  data.title,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.w700,
-                    height: 1.1,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  data.description,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w400,
-                    height: 1.2,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Positioned(
-            left: 16,
-            right: 16,
-            top: 682,
-            child: FilledButton(
-              onPressed: onNext,
-              style: FilledButton.styleFrom(
-                backgroundColor: const Color(0xFFF88A2A),
-                foregroundColor: Colors.white,
-                minimumSize: const Size.fromHeight(56),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                textStyle: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        IgnorePointer(
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              Positioned(
+                left: 16,
+                right: 16,
+                top: 498,
+                child: Column(
+                  children: [
+                    Text(
+                      data.title,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.w700,
+                        height: 1.1,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      data.description,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                        height: 1.2,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              child: Text(buttonLabel),
-            ),
+              Positioned(
+                left: 0,
+                right: 0,
+                top: 634,
+                child: OnboardingPageIndicator(
+                  currentPage: currentPage,
+                  pageCount: pageCount,
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+        Positioned(
+          left: 16,
+          right: 16,
+          top: 682,
+          child: FilledButton(
+            onPressed: onNext,
+            style: FilledButton.styleFrom(
+              backgroundColor: const Color(0xFFF88A2A),
+              foregroundColor: Colors.white,
+              minimumSize: const Size.fromHeight(56),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              textStyle: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            child: Text(buttonLabel),
+          ),
+        ),
+      ],
     );
   }
 }

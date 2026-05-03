@@ -43,12 +43,7 @@ class AppBottomNavBar extends StatelessWidget {
     return Container(
       decoration: const BoxDecoration(
         color: Color(0xFFFFFBF2),
-        boxShadow: [
-          BoxShadow(
-            color: Color(0x11103363),
-            blurRadius: 32,
-          ),
-        ],
+        boxShadow: [BoxShadow(color: Color(0x11103363), blurRadius: 32)],
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -75,10 +70,8 @@ class AppBottomNavBar extends StatelessWidget {
                         Text(
                           item.label,
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: isSelected
-                                ? const Color(0xFFF88A2A)
-                                : const Color(0xFF9C8F7B),
+                          style: const TextStyle(
+                            color: Color(0xFFF88A2A),
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
                             height: 1.4,
@@ -91,17 +84,7 @@ class AppBottomNavBar extends StatelessWidget {
               }),
             ),
           ),
-          Container(
-            width: 134,
-            height: 5,
-            margin: const EdgeInsets.only(top: 21, bottom: 8),
-            decoration: ShapeDecoration(
-              color: const Color(0xFF1A1B1C),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(100),
-              ),
-            ),
-          ),
+          const SizedBox(height: 8),
         ],
       ),
     );
